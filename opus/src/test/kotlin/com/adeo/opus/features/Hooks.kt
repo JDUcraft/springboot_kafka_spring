@@ -1,6 +1,6 @@
 package com.adeo.opus.features
 
-import com.adeo.opus.configurations.opusLogger
+import com.adeo.opus.opusLogger
 import cucumber.api.java.After
 import cucumber.api.java.Before
 

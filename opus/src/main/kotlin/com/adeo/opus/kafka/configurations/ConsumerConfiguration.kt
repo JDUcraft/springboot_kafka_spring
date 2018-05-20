@@ -1,7 +1,7 @@
 package com.adeo.opus.kafka.configurations
 
 import com.adeo.opus.configurations.OpusConfiguration
-import com.adeo.opus.configurations.opusLogger
+import com.adeo.opus.opusLogger
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +11,6 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import java.util.*
-
 
 @Configuration
 class ConsumerConfiguration {
@@ -28,7 +27,7 @@ class ConsumerConfiguration {
         props[ConsumerConfig.GROUP_ID_CONFIG] = opusConfiguration.groupId
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-        logger.info("Consumer configuration: $props")
+        logger.error("ConsumerFactory: $props")
         return DefaultKafkaConsumerFactory(props)
     }
 
@@ -36,6 +35,7 @@ class ConsumerConfiguration {
     fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
         factory.consumerFactory = consumerFactory()
+        logger.error("ConcurrentKafkaListenerContainerFactory: $factory")
         return factory
     }
 }

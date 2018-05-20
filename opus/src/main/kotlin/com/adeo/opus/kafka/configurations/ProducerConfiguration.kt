@@ -1,7 +1,7 @@
 package com.adeo.opus.kafka.configurations
 
 import com.adeo.opus.configurations.OpusConfiguration
-import com.adeo.opus.configurations.opusLogger
+import com.adeo.opus.opusLogger
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +26,7 @@ class ProducerConfiguration {
         props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = opusConfiguration.bootstrapServers
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
-        logger.info("Consumer configuration: $props")
+        logger.error("ProducerFactory: $props")
         return DefaultKafkaProducerFactory(props)
     }
 
