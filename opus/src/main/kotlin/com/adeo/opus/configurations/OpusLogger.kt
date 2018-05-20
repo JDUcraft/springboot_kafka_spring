@@ -1,4 +1,4 @@
-package com.adeo.opus
+package com.adeo.opus.configurations
 
 import org.slf4j.LoggerFactory
 

@@ -1,68 +1,42 @@
 package com.adeo.opus.unittests
 
-import com.adeo.opus.opusLogger
-import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.kafka.common.serialization.StringSerializer
+import com.adeo.opus.configurations.opusLogger
+import com.adeo.opus.kafka.services.Producer
+import org.junit.Before
 import org.junit.jupiter.api.Test
-import java.io.IOException
-import java.util.*
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.any
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.Mockito.never
+import org.mockito.MockitoAnnotations.initMocks
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import kotlin.system.measureTimeMillis
 
-
+@SpringBootTest
+@ExtendWith(SpringExtension::class)
 class OpusDataIntegrationApplicationTests {
 
+    @Mock
+    private lateinit var producer: Producer
+
     private val logger = opusLogger(javaClass)
-    private val configFileName: String = "application.properties"
 
-    @Test
-    fun producer() {
-        val properties = getProperties()
-        val producer = KafkaProducer<String, String>(properties, StringSerializer(), StringSerializer())
-        for (x in 0..6000000) {
-            producer.send(ProducerRecord(properties.getProperty("topic"), "exampleKey $x", "exampleValue $x"))
-        }
-        producer.close()
-        logger.info("Message sent successfully")
+    @Before
+    fun beforeAll() {
+        initMocks(this)
+        Mockito.verify(producer, never()).send(any())
     }
 
     @Test
-    fun consumer() {
-        val properties = getProperties()
-        properties["key.deserializer"] = StringDeserializer::class.java.name
-        properties["value.deserializer"] = StringDeserializer::class.java.name
-        properties["group.id"] = "opus-client"
-        val consumer = KafkaConsumer<String, String>(properties)
-        consumer.subscribe(Collections.singletonList(properties.getProperty("topic")))
-
-        val giveUp = 100
-        var noRecordsCount = 0
-        while (true) {
-            val consumerRecords = consumer.poll(1000)
-            if (consumerRecords.count() == 0) {
-                noRecordsCount++
-                if (noRecordsCount > giveUp)
-                    break
-                else
-                    continue
+    fun run() {
+        val time = measureTimeMillis {
+            for (x in 0..1000) {
+                producer.send("{name: 'Jonathan', id: $x}")
             }
-            consumerRecords.forEach { record ->
-                logger.info("Consumer Record ${record.key()} ${record.value()}")
-            }
-            consumer.commitAsync()
         }
-        consumer.close()
-    }
-
-    private fun getProperties(): Properties {
-        val properties = Properties()
-        try {
-            properties.load(this.javaClass.classLoader.getResourceAsStream(configFileName))
-            return properties
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-        }
-        return properties
+        logger.info("Ended in: $time ms")
     }
 }

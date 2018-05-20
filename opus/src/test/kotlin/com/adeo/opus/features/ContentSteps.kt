@@ -1,6 +1,6 @@
 package com.adeo.opus.features
 
-import com.adeo.opus.opusLogger
+import com.adeo.opus.configurations.opusLogger
 import cucumber.api.java8.En
 
 class ContentSteps : En {
