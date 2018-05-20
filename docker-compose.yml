@@ -1,0 +1,26 @@
+zookeeper:
+  image: wurstmeister/zookeeper
+  ports:
+    - "2181:2181"
+
+kafka:
+  image: wurstmeister/kafka
+ # hostname: kafka
+  ports:
+    - "9092:9092"
+  links:
+    - zookeeper:zk
+  environment:
+    KAFKA_ADVERTISED_HOST_NAME: "192.168.0.26"
+    KAFKA_ADVERTISED_PORT: "9092"
+    KAFKA_ZOOKEEPER_CONNECT: "192.168.0.26:2181"
+
+kafka-manager:
+  image: sheepkiller/kafka-manager
+  ports: 
+    - "9000:9000"
+  links:
+    - zookeeper:zk
+  environment:
+    ZK_HOSTS: "192.168.0.26:2181"
+    APPLICATION_SECRET: "jdu"
